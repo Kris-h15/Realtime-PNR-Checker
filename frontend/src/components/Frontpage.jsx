@@ -59,16 +59,13 @@ export default function Frontpage() {
             setError("");
           }}
         />
-        {!alertOn && (
-          /* Email Input Box */
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        )}
-
+        /* Email Input Box */
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
         <button onClick={checkPNR} disabled={loading}>
           {loading ? "Checking..." : "Check PNR"}
         </button>

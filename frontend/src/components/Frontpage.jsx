@@ -59,7 +59,6 @@ export default function Frontpage() {
             setError("");
           }}
         />
-        /* Email Input Box */
         <input
           type="email"
           placeholder="Enter your email"

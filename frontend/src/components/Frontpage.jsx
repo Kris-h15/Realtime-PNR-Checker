@@ -5,6 +5,7 @@ export default function Frontpage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [alertOn, setAlertOn] = useState(false);
 
   const checkPNR = async () => {
     if (pnr.length !== 10) {
@@ -14,63 +15,126 @@ export default function Frontpage() {
 
     setError("");
     setLoading(true);
+    setResult(null);
 
-    try {
-      const response = await fetch(`http://localhost:5000/api/pnr/${pnr}`);
+    // Temporary data for frontend testing
+    setTimeout(() => {
+      setResult({
+        pnr: pnr,
+        status: "CONFIRMED",
+        trainNumber: "12393",
+        trainName: "Sampoorna Kranti Express",
+        from: "New Delhi",
+        to: "Patna Junction",
+      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
-      setResult(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
       setLoading(false);
-    }
+    }, 1000);
+  };
+
+  const setAlert = () => {
+    setAlertOn(true);
+  };
+
+  const switchOffAlert = () => {
+    setAlertOn(false);
   };
 
   return (
-    <>
-      <div className="container">
-        <h1>PNR Status Checker</h1>
+    <div className="container">
 
-        <p>Check your Indian Railway PNR status</p>
+      <h1>PNR Status Checker</h1>
 
-        {/* pnr details form */}
-        <div className="pnr-form">
-          <input
-            type="text"
-            placeholder="Enter 10 digit PNR"
-            value={pnr}
-            maxLength={10}
-            onChange={(e) => setPnr(e.target.value.replace(/\D/g, ""))}
-          />
+      <p>Check your Indian Railway PNR status</p>
 
-          <button onClick={checkPNR}>
-            {loading ? "Checking..." : "Check PNR"}
-          </button>
-        </div>
+      {/* PNR INPUT */}
 
-        {error && <div className="error">{error}</div>}
+      <div className="pnr-form">
 
-        {result && (
-          <div className="result">
-            <h2>PNR Details</h2>
+        <input
+          type="text"
+          placeholder="Enter 10 digit PNR"
+          value={pnr}
+          maxLength={10}
+          onChange={(e) => {
+            setPnr(e.target.value.replace(/\D/g, ""));
+            setError("");
+          }}
+        />
 
-            <p>
-              <strong>PNR:</strong> {result.pnr}
-            </p>
+        <button onClick={checkPNR} disabled={loading}>
+          {loading ? "Checking..." : "Check PNR"}
+        </button>
 
-            <p>
-              <strong>Status:</strong> {result.status}
-            </p>
-          </div>
-        )}
       </div>
-      ;
-    </>
+
+      {/* ERROR */}
+
+      {error && (
+        <div className="error">
+          {error}
+        </div>
+      )}
+
+      {/* RESULT */}
+
+      {result && (
+        <div className="result">
+
+          <h2>PNR Details</h2>
+
+          <p>
+            <strong>PNR:</strong> {result.pnr}
+          </p>
+
+          <p>
+            <strong>Status:</strong> {result.status}
+          </p>
+
+          <p>
+            <strong>Train:</strong>{" "}
+            {result.trainNumber} - {result.trainName}
+          </p>
+
+          <p>
+            <strong>From:</strong> {result.from}
+          </p>
+
+          <p>
+            <strong>To:</strong> {result.to}
+          </p>
+
+          {/* ALERT BUTTONS */}
+
+          <div className="alert-buttons">
+
+            <button
+              className="set-alert"
+              onClick={setAlert}
+              disabled={alertOn}
+            >
+              🔔 Set Alert
+            </button>
+
+            <button
+              className="off-alert"
+              onClick={switchOffAlert}
+              disabled={!alertOn}
+            >
+              🔕 Switch Off Alert
+            </button>
+
+          </div>
+
+          {alertOn && (
+            <p className="alert-message">
+              🔔 Alert is ON for this PNR
+            </p>
+          )}
+
+        </div>
+      )}
+
+    </div>
   );
 }
